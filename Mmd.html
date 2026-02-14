@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>میم گیمر/title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn', sans-serif;}
+body{background: radial-gradient(circle at top,#1a001f,#000);height:100vh;display:flex;justify-content:center;align-items:center;}
+.chat-container{width:380px;height:650px;background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border-radius:30px;box-shadow:0 0 60px rgba(255,0,120,0.3);padding:20px;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.1);display:none;}
+.chat-header{text-align:center;color:#ff4da6;font-weight:700;margin-bottom:15px;}
+.messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.message{max-width:75%;padding:12px 16px;border-radius:20px;font-size:14px;line-height:1.8;align-self:flex-end;background:linear-gradient(135deg,#ff2f92,#ff6ec7);color:white;border-bottom-right-radius:5px;word-wrap:break-word;}
+.typing{width:60px;height:30px;border-radius:20px;background:rgba(255,255,255,0.1);display:flex;justify-content:center;align-items:center;gap:5px;align-self:flex-end;}
+.dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.5s infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:#000a;display:flex;justify-content:center;align-items:center;flex-direction:column;color:white;font-size:20px;text-align:center;cursor:pointer;z-index:1000;}
+</style>
+</head>
+<body>
+<div id="overlay">بزن رو اینجا بچه خوشگله</div>
+<audio id="bgMusic" loop>
+<source src="لینک آهنگ" type="audio/mpeg">
+</audio>
+<div class="chat-container">
+    <div class="chat-header">میم</div>
+    <div class="messages" id="messages"></div>
+</div>
+
+<script>
+const music = document.getElementById("bgMusic");
+const overlay = document.getElementById("overlay");
+const chatContainer = document.querySelector(".chat-container");
+
+overlay.addEventListener("click", ()=>{
+    overlay.style.display="none";
+    chatContainer.style.display="flex";
+    music.play();
+    addMessage();
+});
+
+const messages = [
+"هر چی جمله عاشقانه دارین دیگه خودتون اضافه کنین برای عشقتون",
+];
+const container = document.getElementById("messages");
+let index = 0;
+function typeMessage(text, element, callback){
+    let i = 0;
+    function typing(){
+        if(i < text.length){
+            element.innerHTML += text.charAt(i);
+            i++;
+            container.scrollTop = container.scrollHeight;
+            setTimeout(typing,40);
+        } else {
+            callback();
+        }
+    }
+    typing();
+}
+function showTyping(callback){
+    const typing = document.createElement("div");
+    typing.classList.add("typing");
+    typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    container.appendChild(typing);
+    container.scrollTop = container.scrollHeight;
+
+    setTimeout(()=>{
+        typing.remove();
+        callback();
+    },800);
+}
+function addMessage(){
+    if(index >= messages.length) return;
+    showTyping(()=>{
+        const msg = document.createElement("div");
+        msg.classList.add("message");
+        container.appendChild(msg);
+
+        typeMessage(messages[index], msg, ()=>{
+            index++;
+            setTimeout(addMessage,600);
+        });
+    });
+}
+</script>
+</body>
+</html>
